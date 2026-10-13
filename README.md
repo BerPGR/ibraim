@@ -1,5 +1,32 @@
-# Vue 3 + TypeScript + Vite
+# Ibrahim
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Frontend do sistema de acompanhamento financeiro, feito com Vue 3 e TypeScript.
+Os componentes Vue devem usar `<script setup lang="ts">`.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## API
+
+O cliente HTTP compartilhado fica em `src/lib/axios.ts`. Importe-o onde precisar
+com `import api from '@/lib/axios'`; a URL base vem de `VITE_API_BASE_URL` (com
+fallback para `/api`). Copie `.env.example` para `.env.local` e ajuste a URL para
+o backend em desenvolvimento.
+
+Mantenha funções de API agrupadas por domínio em composables, por exemplo
+`src/composables/useTransactions.ts`, usando o cliente compartilhado:
+
+```ts
+import api from '@/lib/axios'
+
+export function useTransactions() {
+  async function getTransactions() {
+    const { data } = await api.get('/transactions')
+    return data
+  }
+
+  return { getTransactions }
+}
+```
+
+Assim, URL base, timeout e cabeçalhos ficam centralizados, enquanto cada
+composable reúne as operações de API de uma área. Adicione Pinia quando houver
+estado que precise ser compartilhado entre telas, como autenticação ou dados
+persistidos em várias rotas.
